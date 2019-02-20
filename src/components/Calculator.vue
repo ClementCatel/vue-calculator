@@ -80,7 +80,7 @@ export default {
   }
 
   .btn {
-    border: 0.1px solid rgb(223, 223, 223, 0.25);
+    border: 1px solid rgb(223, 223, 223, 0.25);
     display: flex;
     align-items: center;
     justify-content: center; 
