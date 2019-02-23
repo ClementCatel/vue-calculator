@@ -1,7 +1,6 @@
 <template>
     <div class="calculator">
       <div class="display" >{{ current || '0' }}</div>
-      <div class="display result">{{ result }}</div>
 
       <div class="btn mem" tabindex="1">mc</div>
       <div class="btn mem" tabindex="2">m+</div>
@@ -40,47 +39,33 @@ export default {
     return {
       previous: null,
       current: '',
-      currentValue: '',
-      result: '',
       operator: null,
       operatorClicked: false,
     }
   },
   methods: {
     clear() {
-      this.current = this.result = this.currentValue = '';
+      this.current = '';
       this.operator = this.previous = null;
+      this.operatorClicked = false;
     },
 
     backspace() {
-      this.current = this.current.slice(0, this.current.length - 1);
-      this.compute();
-      this.operatorClicked = false;
-    },
-
-    compute() {
-      if (this.operator != null) {
-        this.result = `${this.operator(parseFloat(this.previous), parseFloat(this.currentValue))}`;
+      if (!this.operatorClicked) {
+        this.current = this.current.slice(0, this.current.length - 1);
       }
     },
 
-    // TODO : recalculate the percentage every time it is clicked
     percent() {
-      this.current = `${this.current}${'%'}`;
-      this.result = `${parseFloat(this.current) / 100}`;
+      this.current = `${parseFloat(this.current) / 100}`;
     },
  
     append(number) {
-      this.current = `${this.current}${number}`;
-      this.currentValue = `${this.currentValue}${number}`;
-      this.compute();
-      this.operatorClicked = false;
-    },
-
-    appendOperator(operator) {
-      if (this.current !== '' && !this.operatorClicked) {
-        this.current = `${this.current}${operator}`;
+      if (this.operatorClicked) {
+        this.current = '';
+        this.operatorClicked = false;
       }
+      this.current = `${this.current}${number}`;
     },
 
     dot() {
@@ -90,36 +75,35 @@ export default {
     },
 
     setPrevious() {
-      this.result === '' ?
-        this.previous = this.currentValue : this.previous = this.result;
-      this.currentValue = '';
+      this.previous = this.current;
       this.operatorClicked = true;
     },
 
     divide() {
-      this.operator = (a, b) => a / b;
-      this.appendOperator('÷')
+      this.operator = (a, b) => a / b ;
       this.setPrevious();
     },
     times() {
-      this.operator = (a, b) => a * b;
-      this.appendOperator('×')
+      this.operator = (a, b) => a * b ;
       this.setPrevious();
     },
     minus() {
-      this.operator = (a, b) => a - b;
-      this.appendOperator('−')
+      this.operator = (a, b) => a - b ;
       this.setPrevious();
     },
     add() {
-      this.operator = (a, b) => a + b;
-      this.appendOperator('+')
+      this.operator = (a, b) => a + b ;
       this.setPrevious();
     },
 
     equals() {
-      this.current = this.currentValue = this.result;
-      this.result = '';
+      if (this.operator) {
+        this.current = `${this.operator(
+        parseFloat(this.previous),
+        parseFloat(this.current)
+      )}`;
+      this.previous = null;
+      }
     }
   },
 }
@@ -133,7 +117,7 @@ export default {
     font-size: 30px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: minmax(100px, auto);
+    grid-auto-rows: minmax(90px, auto);
     background-color: white;
   }
 
@@ -146,11 +130,6 @@ export default {
     margin-right: 5%;
   }
 
-  .result {
-    color: #888;
-    font-size: 30px;
-  }
-
   .mem {
     background-color: #eee;
     color: #888
@@ -158,7 +137,7 @@ export default {
 
   .equals {
     grid-column: 4 / 5;
-    grid-row: 7 / 9;
+    grid-row: 6 / 8;
     background-color: rgb(0, 98, 255);
     color: white;
     font-size: 26px;
@@ -169,10 +148,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center; 
-  }
-
-  .btn :focus {
-    background-color: #aaa
   }
 
   .operator {
