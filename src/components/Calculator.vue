@@ -130,7 +130,7 @@ export default {
         this.current = `${this.operator(
         parseFloat(this.previous),
         parseFloat(this.current)
-      )}`;
+      ).toFixed(2)}`;
       this.previous = null;
       }
     }
