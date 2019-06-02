@@ -1,5 +1,7 @@
 # vue-calculator
 
+A simple calculator built with Vue.js for learning purposes.
+
 ## Project setup
 ```
 npm install
